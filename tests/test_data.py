@@ -39,6 +39,22 @@ def test_strain_names_and_host_speices_are_correct():
 
     A/green-winged_teal/... matched with Host Species: Mallard
     """
-    
-    
-    
+    bad_strains = []
+    for r, d in ird_df.iterrows():
+        strain_hostname = d['Strain Name'].split('/')[1].lower()\
+            .replace('-', ' ')
+        hostsp_hostname = d['Host Species'].lower().replace('-', ' ')
+        try:
+            cond1 = strain_hostname == hostsp_hostname
+            cond2 = strain_hostname in hostsp_hostname
+            cond3 = hostsp_hostname in strain_hostname
+            assert cond1 or cond2 or cond3
+        except AssertionError:
+            data = dict()
+            data['Strain Name'] = d['Strain Name']
+            data['Host Species'] = d['Host Species']
+            bad_strains.append(data)
+    try:
+        assert len(bad_strains) == 0, print('There are bad strains.')
+    except AssertionError:
+        pd.DataFrame(bad_strains).to_csv('bad_strains.csv')
