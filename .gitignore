@@ -1,3 +1,6 @@
+# Automatically generated files
+tests/bad_strains.csv
+
 # Mac OS X
 **.DS_Store
 
