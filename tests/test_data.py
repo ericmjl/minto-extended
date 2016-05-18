@@ -3,8 +3,7 @@ import os
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-ird_df = pd.read_csv('../data/20160411_Minto_Run2 Sequences.csv',
-                     parse_dates=['Collection Date'])
+ird_df = pd.read_csv('../data/20160411_Minto_Run2 Sequences.csv')
 ird_df['Strain Name'] = ird_df['Strain Name'].str.split('(').str[0]
 ird_df['Host Species'] = ird_df['Host Species'].str.replace('IRD:', '')\
     .str.replace('/Avian', '')
@@ -13,6 +12,20 @@ ird_df.head()
 submitted_df = pd.read_csv(
     '../data/Alaska_waterfowl_79viruses_metadata_20151223.csv')
 submitted_df['Strain_name'].tail()
+
+
+def test_all_strains_have_date_month_year():
+    """
+    Checks to make sure that each strain has a year, month, and day.
+    """
+    # for r, d in ird_df.iterrows():
+    #     date_split = d['Collection Date'].split('/')
+    #     assert len(date_split) == 3
+    ird_df['date_length'] = ird_df['Collection Date'].str.split('/').str.len()
+
+    assert 1 not in ird_df['date_length'].values
+    assert 2 not in ird_df['date_length'].values
+    assert 3 in ird_df['date_length'].values
 
 
 def test_all_strains_of_interest_are_present():
@@ -28,6 +41,7 @@ def test_dates_are_in_correct_range():
     """
     Checks to make sure that all of the dates are within the 2008-2012 range
     """
+    ird_df['Collection Date'] = pd.to_datetime(ird_df['Collection Date'])
     assert ird_df['Collection Date'].min().year == 2007
     assert ird_df['Collection Date'].max().year == 2012
 
