@@ -2,20 +2,21 @@ import pandas as pd
 from Bio import SeqIO
 from tqdm import tqdm
 
+# Read in the original download from IRD.
 ird_df = pd.read_csv(
     '../data/20160411_Minto_Run2 Sequences.backup_20160518.csv')
 ird_df['Sequence Accession'] = ird_df['Sequence Accession'].str.strip('*')
 ird_df.set_index('Sequence Accession', inplace=True)
 
+# Read in the corrected data provided by Brandt.
 corrected_df = pd.read_csv(
     '../data/20160411_Minto_Run2 Sequences.corrected_dates_20160506.csv',
     index_col=0)
-# corrected_df[corrected_df['Dates_Corrected_By_Brandt']]
 corrected_df['Sequence Accession'] = corrected_df['Sequence Accession']\
     .str.strip('*')
 corrected_df.set_index('Sequence Accession', inplace=True)
+# Filter the data such that we are only dealing with what Brandt has corrected.
 corrected_df = corrected_df[corrected_df['Date_Corrected_By_Brandt'] == '*']
-corrected_df.shape
 
 
 def clean_strains_with_bad_dates(ird_df):
